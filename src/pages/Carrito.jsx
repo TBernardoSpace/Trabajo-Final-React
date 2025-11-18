@@ -10,7 +10,7 @@ const Carrito = () => {
   const navigate = useNavigate();
 
   const handleFinalizarCompra = () => {
-    alert('¡Gracias por tu compra! (Simulación de Checkout)');
+    alert('¡Gracias por tu compra!');
     clearCart();
     navigate('/');
   };

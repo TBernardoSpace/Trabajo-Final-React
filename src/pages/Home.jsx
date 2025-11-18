@@ -88,7 +88,7 @@ const Home = () => {
           <Carousel.Item>
             <img
               className="d-block w-100"
-              src="/img-carrusel-1.jpg"
+              src="./img-carrusel-1.jpg"
               alt="Nuevo Lanzamiento"
               style={{ height: '400px', objectFit: 'cover' }}
               onError={(e) => e.target.src = 'https://via.placeholder.com/1200x400?text=LANZAMIENTO'}
@@ -101,7 +101,7 @@ const Home = () => {
           <Carousel.Item>
             <img
               className="d-block w-100"
-              src="/img-carrusel-2.jpg"
+              src="./img-carrusel-2.jpg"
               alt="Ofertas"
               style={{ height: '400px', objectFit: 'cover' }}
               onError={(e) => e.target.src = 'https://via.placeholder.com/1200x400?text=OFERTAS'}
@@ -114,7 +114,7 @@ const Home = () => {
           <Carousel.Item>
             <img
               className="d-block w-100"
-              src="/img-carrusel-3.jpg"
+              src="./img-carrusel-3.jpg"
               alt="Exclusivos"
               style={{ height: '400px', objectFit: 'cover' }}
               onError={(e) => e.target.src = 'https://via.placeholder.com/1200x400?text=EXCLUSIVOS'}

@@ -19,7 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <AuthProvider>
           <CartProvider>
             <ProductProvider> 
-              <BrowserRouter>
+              <BrowserRouter basename="/Trabajo-Final-React">
                 <Background />
                 <App />
               </BrowserRouter>

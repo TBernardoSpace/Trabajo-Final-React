@@ -53,7 +53,7 @@ function App() {
       <Navbar expand="lg" className="navbar-futuristic">
         <Container>
           <Navbar.Brand as={Link} to="/" className="brand-container">
-            <img src="/logo.png" className="logo-neon" alt="Logo" />
+            <img src="./logo.png" className="logo-neon" alt="Logo" />
             <span className="brand-text">Gamer-Max</span>
           </Navbar.Brand>
           
