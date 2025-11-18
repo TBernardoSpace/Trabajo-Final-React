@@ -1,0 +1,109 @@
+@keyframes rgb-glow {
+  0% { box-shadow: 0 0 10px var(--accent-primary); }
+  50% { box-shadow: 0 0 20px var(--accent-primary), 0 0 30px var(--accent-secondary); }
+  100% { box-shadow: 0 0 10px var(--accent-primary); }
+}
+
+@keyframes scan-line {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-3px, 3px); }
+  40% { transform: translate(3px, -3px); }
+  60% { transform: translate(-3px, 0); }
+  80% { transform: translate(3px, 3px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes seamless-pan {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
+}
+
+.fade-in {
+  animation: fade-in 0.5s ease forwards;
+}
+
+.rgb-border {
+  position: relative;
+  border: 1px solid transparent;
+  background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+              var(--rgb-gradient) border-box;
+  background-size: 200% 200%;
+  animation: rgb-glow 3s ease-in-out infinite;
+}
+
+.btn-scan {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-scan::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-scan:hover::before {
+  left: 100%;
+}
+
+.glitch-text {
+  position: relative;
+  font-family: var(--font-accent);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  color: var(--text-primary);
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  mix-blend-mode: screen;
+}
+
+.glitch-text::before {
+  animation: glitch 0.3s infinite;
+  color: var(--accent-secondary);
+  z-index: -1;
+}
+
+.glitch-text::after {
+  animation: glitch 0.3s infinite reverse;
+  color: var(--accent-success);
+  z-index: -2;
+}
+
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform var(--transition-medium);
+}
+
+.card-3d:hover {
+  transform: rotateX(5deg) translateZ(10px);
+}
