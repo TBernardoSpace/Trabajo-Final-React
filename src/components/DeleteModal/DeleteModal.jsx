@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import './DeleteModal.css';
 
 const DeleteModal = ({ show, handleClose, handleConfirm, productName }) => {
   return (

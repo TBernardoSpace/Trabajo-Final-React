@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import '../styles/background-standalone.css';
+import '../../styles/background-standalone.css';
+import './Background.css';
 
 const Background = () => {
   const canvasRef = useRef(null);

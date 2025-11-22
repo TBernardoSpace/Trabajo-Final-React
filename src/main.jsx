@@ -10,7 +10,7 @@ import { CartProvider } from './context/CartContext.jsx';
 import { ProductProvider } from './context/ProductContext.jsx'; 
 import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from './context/ThemeContext.jsx'; 
-import Background from './components/Background.jsx';
+import Background from './components/Background/Background';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -19,7 +19,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <AuthProvider>
           <CartProvider>
             <ProductProvider> 
-              <BrowserRouter basename="/Trabajo-Final-React">
+              <BrowserRouter 
+                basename={import.meta.env.BASE_URL}
+                future={{
+                  v7_startTransition: true,
+                  v7_relativeSplatPath: true,
+                }}
+              >
                 <Background />
                 <App />
               </BrowserRouter>

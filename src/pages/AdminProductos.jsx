@@ -3,17 +3,16 @@ import { useProducts } from '../context/ProductContext';
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { Table, Breadcrumb, Spinner, Alert, Container, Card, Button } from 'react-bootstrap';
-import PageHead from '../components/PageHead';
-import ProductForm from '../components/ProductForm';
-import DeleteModal from '../components/DeleteModal';
-import EditProductModal from '../components/EditProductModal';
+import PageHead from '../components/PageHead/PageHead';
+import ProductForm from '../components/ProductForm/ProductForm';
+import DeleteModal from '../components/DeleteModal/DeleteModal';
+import EditProductModal from '../components/EditProductModal/EditProductModal';
 import { FaEdit, FaTrash, FaGamepad } from 'react-icons/fa';
 
 const AdminProductos = () => {
   const { products, loading, error, addProduct, updateProduct, deleteProduct, fetchProducts } = useProducts();
   const [productToDelete, setProductToDelete] = useState(null);
   const [productToEdit, setProductToEdit] = useState(null);
-  const [isDeduplicating, setIsDeduplicating] = useState(false);
 
   const handleAddProduct = async (productData) => {
     const dataToSubmit = { ...productData, price: parseFloat(productData.price) };
@@ -41,48 +40,6 @@ const AdminProductos = () => {
     }
   };
 
-  const handleDeDuplicate = async () => {
-    setIsDeduplicating(true);
-    toast.info("Iniciando limpieza de duplicados...", { autoClose: false });
-
-    const productsByName = products.reduce((acc, product) => {
-        acc[product.name] = acc[product.name] || [];
-        acc[product.name].push(product);
-        return acc;
-    }, {});
-
-    const productsToDelete = [];
-    for (const name in productsByName) {
-        const group = productsByName[name];
-        if (group.length > 1) {
-            productsToDelete.push(...group.slice(1));
-        }
-    }
-
-    if (productsToDelete.length === 0) {
-        toast.dismiss();
-        toast.success("No se encontraron duplicados.");
-        setIsDeduplicating(false);
-        return;
-    }
-
-    toast.dismiss();
-    toast.info(`Se eliminarán ${productsToDelete.length} productos duplicados.`);
-
-    let successCount = 0;
-    for (const product of productsToDelete) {
-        const success = await deleteProduct(product.id);
-        if (success) {
-            successCount++;
-        }
-        await new Promise(res => setTimeout(res, 300));
-    }
-    
-    toast.success(`Limpieza completada. Se eliminaron ${successCount} duplicados.`);
-    fetchProducts();
-    setIsDeduplicating(false);
-  };
-
   return (
     <Container className="my-5">
       <PageHead title="Panel Administrativo - Gamer-Max" />
@@ -92,7 +49,6 @@ const AdminProductos = () => {
       <Card className="mb-5 p-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h3>Agregar Nuevo Producto</h3>
-          <span className="badge bg-primary">Nuevo</span>
         </div>
         <ProductForm onSubmitForm={handleAddProduct} />
       </Card>
@@ -103,14 +59,6 @@ const AdminProductos = () => {
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h3>Productos Existentes</h3>
           <div className="d-flex align-items-center gap-3">
-            <Button 
-              variant="danger" 
-              size="sm"
-              onClick={handleDeDuplicate}
-              disabled={isDeduplicating}
-            >
-              {isDeduplicating ? 'Limpiando...' : 'Eliminar Duplicados'}
-            </Button>
             <div className="text-muted">
               Total: {products.length} productos
             </div>

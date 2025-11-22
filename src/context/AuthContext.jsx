@@ -21,9 +21,13 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = (userData) => {
-        const simulatedUser = { id: 1, email: userData.email };
-        localStorage.setItem('user', JSON.stringify(simulatedUser));
-        setUser(simulatedUser);
+        if (userData.email === 'admin' && userData.password === '1234') {
+            const simulatedUser = { id: 1, email: userData.email, role: 'admin' };
+            localStorage.setItem('user', JSON.stringify(simulatedUser));
+            setUser(simulatedUser);
+            return true;
+        }
+        return false;
     };
 
     const logout = () => {

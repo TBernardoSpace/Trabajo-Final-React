@@ -2,15 +2,27 @@ import React from 'react';
 import { useCart } from '../context/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { Table, Row, Col, Breadcrumb, Container, Card, Button } from 'react-bootstrap';
-import PageHead from '../components/PageHead';
+import PageHead from '../components/PageHead/PageHead';
 import { FaTrash, FaArrowLeft, FaCreditCard } from 'react-icons/fa';
+
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const Carrito = () => {
   const { cartItems, removeItem, clearCart, cartCount, cartTotal } = useCart();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleFinalizarCompra = () => {
-    alert('¡Gracias por tu compra!');
+    if (!isAuthenticated) {
+        toast.info("Debes iniciar sesión para finalizar tu compra.", {
+            onClick: () => navigate('/login'),
+        });
+        navigate('/login');
+        return;
+    }
+    
+    toast.success('¡Gracias por tu compra! Tu pedido ha sido procesado.');
     clearCart();
     navigate('/');
   };

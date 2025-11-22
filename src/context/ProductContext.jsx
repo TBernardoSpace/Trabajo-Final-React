@@ -76,6 +76,16 @@ export const ProductProvider = ({ children }) => {
         }
     };
 
+    const getProductById = async (id) => {
+        try {
+            const response = await productsAPI.getById(id);
+            return response.data;
+        } catch (err) {
+            console.error("Error al obtener producto:", err);
+            return null;
+        }
+    };
+
     const value = {
         products,
         loading,
@@ -84,6 +94,7 @@ export const ProductProvider = ({ children }) => {
         addProduct,
         updateProduct,
         deleteProduct,
+        getProductById,
     };
 
     return (

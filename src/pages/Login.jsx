@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import PageHead from '../components/PageHead';
+import PageHead from '../components/PageHead/PageHead';
 import { Alert, Container, Form, Button } from 'react-bootstrap';
 import { FaUser, FaLock } from 'react-icons/fa';
 
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('usuario@ejemplo.com');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('admin');
+  const [password, setPassword] = useState('1234');
   const [error, setError] = useState('');
 
   const handleLogin = (e) => {
@@ -20,8 +20,12 @@ const Login = () => {
       return;
     }
 
-    login({ email });
-    navigate('/carrito');
+    const success = login({ email, password });
+    if (success) {
+      navigate('/admin/alta-productos');
+    } else {
+      setError('Credenciales incorrectas');
+    }
   };
 
   return (
@@ -41,13 +45,13 @@ const Login = () => {
           <Form onSubmit={handleLogin}>
             <Form.Group className="mb-3">
               <Form.Label>
-                <FaUser className="me-2" /> Email
+                <FaUser className="me-2" /> Usuario
               </Form.Label>
               <Form.Control
-                type="email"
+                type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="tu@email.com"
+                placeholder="Usuario"
                 required
               />
             </Form.Group>
@@ -73,7 +77,7 @@ const Login = () => {
             
             <div className="text-center mt-3">
               <small className="text-muted">
-                Demo: usuario@ejemplo.com / 123456
+                Demo: admin / 1234
               </small>
             </div>
           </Form>

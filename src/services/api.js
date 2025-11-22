@@ -8,6 +8,7 @@ const api = axios.create({
 
 export const productsAPI = {
     getAll: (config) => api.get('/products', config),
+    getById: (id) => api.get(`/products/${id}`),
     create: (product) => api.post('/products', product),
     update: (id, updates) => api.put(`/products/${id}`, updates),
     delete: (id) => api.delete(`/products/${id}`),

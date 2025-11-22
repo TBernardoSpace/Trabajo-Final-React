@@ -1,0 +1,33 @@
+.mystery-box-icon {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin-left: 15px; 
+    transition: transform 0.3s ease, filter 0.3s ease;
+    object-fit: contain;
+}
+
+.mystery-box-icon:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px var(--accent-primary, #00f3ff));
+}
+
+.badge-custom {
+    font-size: 0.7rem;
+    border: 1px solid white;
+}
+
+.custom-tooltip .tooltip-inner {
+    background-color: var(--bg-card, #1e1e2e);
+    color: var(--accent-primary, #00f3ff);
+    font-family: var(--font-accent, 'VT323', monospace); 
+    font-size: 1.1rem;
+    padding: 8px 12px;
+    border: 1px solid var(--accent-primary, #00f3ff);
+    box-shadow: 0 0 10px var(--shadow-color, rgba(0, 243, 255, 0.4));
+    border-radius: 4px;
+}
+
+.custom-tooltip .tooltip-arrow::before {
+    border-bottom-color: var(--accent-primary, #00f3ff);
+}

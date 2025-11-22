@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import { Modal, Form, Button, Image } from 'react-bootstrap';
+import './EditProductModal.css';
 
 const EditProductModal = ({ show, handleClose, product, onSave }) => {
   const [formData, setFormData] = useState({
@@ -25,8 +26,9 @@ const EditProductModal = ({ show, handleClose, product, onSave }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const dataToSave = {
       ...formData,
       price: parseFloat(formData.price)
@@ -59,13 +61,35 @@ const EditProductModal = ({ show, handleClose, product, onSave }) => {
           </Form.Group>
 
           <Form.Group className="mb-4">
-            <Form.Label>URL de Imagen</Form.Label>
-            <Form.Control type="text" name="image" value={formData.image} onChange={handleChange} placeholder="https://ejemplo.com/imagen.jpg" />
+            <Form.Label>URL de la Imagen</Form.Label>
+            <Form.Control 
+                type="url" 
+                name="image" 
+                value={formData.image} 
+                onChange={handleChange} 
+                placeholder="https://ejemplo.com/imagen.jpg"
+                required
+            />
+            
+            {formData.image && (
+                <div className="mt-3 text-center p-2 border rounded bg-light">
+                    <p className="text-muted small mb-2">Vista Previa:</p>
+                    <Image 
+                        src={formData.image} 
+                        alt="Vista previa" 
+                        thumbnail 
+                        style={{ maxHeight: '150px', objectFit: 'contain' }}
+                        onError={(e) => e.target.style.display = 'none'}
+                    />
+                </div>
+            )}
           </Form.Group>
 
           <div className="d-flex gap-2 justify-content-end">
             <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
-            <Button variant="primary" type="submit">Guardar Cambios</Button>
+            <Button variant="primary" type="submit">
+                 Guardar Cambios
+            </Button>
           </div>
         </Form>
       </Modal.Body>
