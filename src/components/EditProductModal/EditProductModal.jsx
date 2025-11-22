@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Form, Button, Image } from 'react-bootstrap';
+import { Modal, Form, Button, Spinner, Image } from 'react-bootstrap';
+import { uploadToImgbb } from '../../services/uploadImage';
+import { toast } from 'react-toastify';
 import './EditProductModal.css';
 
 const EditProductModal = ({ show, handleClose, product, onSave }) => {
@@ -9,6 +11,8 @@ const EditProductModal = ({ show, handleClose, product, onSave }) => {
     description: '',
     image: ''
   });
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (product) {
@@ -18,6 +22,7 @@ const EditProductModal = ({ show, handleClose, product, onSave }) => {
         description: product.description || '',
         image: product.image || ''
       });
+      setFile(null);
     }
   }, [product]);
 
@@ -26,11 +31,33 @@ const EditProductModal = ({ show, handleClose, product, onSave }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    let imageUrl = formData.image;
+
+    if (file) {
+      setUploading(true);
+      try {
+        imageUrl = await uploadToImgbb(file);
+      } catch (error) {
+        console.error("Error subiendo imagen:", error);
+        toast.error(`Error al subir imagen: ${error.message}`);
+        setUploading(false);
+        return;
+      }
+      setUploading(false);
+    }
+
     const dataToSave = {
       ...formData,
+      image: imageUrl,
       price: parseFloat(formData.price)
     };
     onSave(product.id, dataToSave);
@@ -61,34 +88,32 @@ const EditProductModal = ({ show, handleClose, product, onSave }) => {
           </Form.Group>
 
           <Form.Group className="mb-4">
-            <Form.Label>URL de la Imagen</Form.Label>
-            <Form.Control 
-                type="url" 
-                name="image" 
-                value={formData.image} 
-                onChange={handleChange} 
-                placeholder="https://ejemplo.com/imagen.jpg"
-                required
-            />
+            <Form.Label>Imagen (Seleccionar nueva para reemplazar)</Form.Label>
             
-            {formData.image && (
-                <div className="mt-3 text-center p-2 border rounded bg-light">
-                    <p className="text-muted small mb-2">Vista Previa:</p>
+            <div className="mb-2">
+                {formData.image && (
                     <Image 
                         src={formData.image} 
-                        alt="Vista previa" 
                         thumbnail 
-                        style={{ maxHeight: '150px', objectFit: 'contain' }}
-                        onError={(e) => e.target.style.display = 'none'}
+                        style={{ width: '100px', height: '100px', objectFit: 'cover' }} 
+                        alt="Actual"
                     />
-                </div>
+                )}
+            </div>
+
+            <Form.Control type="file" accept="image/*" onChange={handleFileChange} />
+            
+            {uploading && (
+                 <div className="mt-2 text-info">
+                     <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> Subiendo a ImgBB...
+                 </div>
             )}
           </Form.Group>
 
           <div className="d-flex gap-2 justify-content-end">
-            <Button variant="secondary" onClick={handleClose}>Cancelar</Button>
-            <Button variant="primary" type="submit">
-                 Guardar Cambios
+            <Button variant="secondary" onClick={handleClose} disabled={uploading}>Cancelar</Button>
+            <Button variant="primary" type="submit" disabled={uploading}>
+                 {uploading ? 'Procesando...' : 'Guardar Cambios'}
             </Button>
           </div>
         </Form>

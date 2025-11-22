@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Form, Button, Image } from 'react-bootstrap';
+import { Form, Button, Spinner, Image } from 'react-bootstrap';
+import { uploadToImgbb } from '../../services/uploadImage';
+import { toast } from 'react-toastify';
 import './ProductForm.css';
 
 const ProductForm = ({ onSubmitForm }) => {
@@ -8,8 +10,10 @@ const ProductForm = ({ onSubmitForm }) => {
         name: '',
         price: 0,
         description: '',
-        image: '',
+        image: '', 
     });
+    const [file, setFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
     const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
@@ -18,6 +22,13 @@ const ProductForm = ({ onSubmitForm }) => {
             ...prev,
             [name]: value
         }));
+    };
+
+    const handleFileChange = (e) => {
+        if (e.target.files[0]) {
+            setFile(e.target.files[0]);
+            setErrors(prev => ({ ...prev, image: null })); // Clear image error
+        }
     };
 
     const validateForm = () => {
@@ -32,10 +43,10 @@ const ProductForm = ({ onSubmitForm }) => {
         if (formData.description.length < 10) {
             newErrors.description = 'La descripción debe tener al menos 10 caracteres.';
         }
-        if (!formData.image.trim()) {
-            newErrors.image = 'La URL de la imagen es obligatoria.';
-        } else if (!formData.image.match(/^https?:\/\/.+\/.+$/)) {
-             newErrors.image = 'Ingresa una URL válida de imagen (http/https).';
+        // Require file only if no existing image (for edit scenarios, though this is add form)
+        // For Add form, file is required.
+        if (!file) {
+            newErrors.image = 'Debes seleccionar una imagen.';
         }
         
         setErrors(newErrors);
@@ -49,11 +60,29 @@ const ProductForm = ({ onSubmitForm }) => {
             return; 
         }
 
-        const success = await onSubmitForm(formData);
+        let imageUrl = '';
+        setUploading(true);
+
+        try {
+            if (file) {
+                imageUrl = await uploadToImgbb(file);
+            }
+        } catch (error) {
+            console.error("Error subiendo imagen:", error);
+            toast.error(`Error al subir imagen: ${error.message}`);
+            setUploading(false);
+            return; // Stop submission if upload fails
+        }
+
+        const success = await onSubmitForm({ ...formData, image: imageUrl });
+        setUploading(false);
         
         if (success) {
             setFormData({ name: '', price: 0, description: '', image: '' });
+            setFile(null);
             setErrors({});
+            const fileInput = document.getElementById('formImage');
+            if (fileInput) fileInput.value = '';
         }
     };
 
@@ -106,35 +135,26 @@ const ProductForm = ({ onSubmitForm }) => {
             </Form.Group>
             
             <Form.Group className="mb-4" controlId="formImage">
-                <Form.Label>URL de la Imagen</Form.Label>
+                <Form.Label>Imagen del Producto</Form.Label>
                 <Form.Control
-                    type="url"
-                    name="image"
-                    placeholder="https://ejemplo.com/imagen.jpg"
-                    value={formData.image}
-                    onChange={handleChange}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
                     isInvalid={!!errors.image}
                 />
                 <Form.Control.Feedback type="invalid">
                     {errors.image}
                 </Form.Control.Feedback>
                 
-                {formData.image && !errors.image && (
-                    <div className="mt-3 text-center p-2 border rounded bg-light">
-                        <p className="text-muted small mb-2">Vista Previa:</p>
-                        <Image 
-                            src={formData.image} 
-                            alt="Vista previa" 
-                            thumbnail 
-                            style={{ maxHeight: '200px', objectFit: 'contain' }}
-                            onError={(e) => e.target.style.display = 'none'}
-                        />
+                {uploading && (
+                    <div className="mt-2 text-info">
+                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> Subiendo a ImgBB...
                     </div>
                 )}
             </Form.Group>
 
-            <Button variant="primary" type="submit" className="w-100">
-                Guardar Producto
+            <Button variant="primary" type="submit" className="w-100" disabled={uploading}>
+                {uploading ? 'Procesando...' : 'Guardar Producto'}
             </Button>
         </Form>
     );
